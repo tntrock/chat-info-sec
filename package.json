@@ -3,14 +3,26 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "deploy": "wrangler deploy",
-    "dev": "wrangler dev",
-    "start": "wrangler dev",
-    "test": "vitest"
+    "deploy": "npm run build && wrangler deploy",
+    "dev": "vite",
+    "test": "vitest run",
+    "build": "vite build",
+    "preview": "npm run build && vite preview"
+  },
+  "dependencies": {
+    "dompurify": "^3.4.16",
+    "highlight.js": "^11.12.0",
+    "marked": "^18.0.14",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0"
   },
   "devDependencies": {
-    "@cloudflare/vitest-pool-workers": "^0.12.4",
-    "vitest": "~3.2.0",
-    "wrangler": "^4.110.0"
-  }
+    "@cloudflare/vite-plugin": "^1.62.2",
+    "@cloudflare/vitest-pool-workers": "^0.22.0",
+    "@vitejs/plugin-react": "^6.1.1",
+    "vite": "^8.3.1",
+    "vitest": "^4.1.11",
+    "wrangler": "^4.144.0"
+  },
+  "type": "module"
 }
