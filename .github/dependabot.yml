@@ -7,6 +7,12 @@ updates:
     groups:
       npm:
         patterns: ["*"]
+    ignore:
+      # @cloudflare/vitest-pool-workers pins vitest ^4; drop once it supports vitest 5
+      - dependency-name: "vitest"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "@vitest/*"
+        update-types: ["version-update:semver-major"]
   - package-ecosystem: github-actions
     directory: /
     schedule:
