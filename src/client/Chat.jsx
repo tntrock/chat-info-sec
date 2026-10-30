@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { deriveKeys, open, seal } from "./crypto.js";
 import { createP2P } from "./p2p.js";
-import { compressImage, parseInvite, randomName, roomSecret, store } from "./util.js";
+import { compressImage, parseInvite, randomName, roomSecret, store, validFrame } from "./util.js";
 import { Avatar, Icon, ThemeToggle } from "./ui.jsx";
 import Message, { REACTIONS, snippet } from "./Message.jsx";
 
@@ -220,6 +220,7 @@ function Room({ room, creds, keys, onAuthFail }) {
             ws.onmessage = e => {
                 let d;
                 try { d = JSON.parse(e.data); } catch { return; }
+                if (!validFrame(d)) return;
                 queue = queue.then(() => handle(d)).catch(console.error);
             };
             ws.onclose = e => {

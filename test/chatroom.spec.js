@@ -1,6 +1,7 @@
 import { SELF } from "cloudflare:test";
 import { describe, it, expect } from "vitest";
 import { deriveKeys, seal, open } from "../src/client/crypto.js";
+import { randomInt, validFrame } from "../src/client/util.js";
 
 async function connect(room) {
     const res = await SELF.fetch(`http://x/r/${room}`, { headers: { Upgrade: "websocket" } });
@@ -60,5 +61,21 @@ describe("worker", () => {
         expect(bobHello.history.map(m => m.c)).toEqual(["CIPHERTEXT"]);
         expect(bobHello.users).toEqual([{ id: hello.you, name: "enc-alice" }]);
         expect((await alice.next("join")).name).toBe("enc-bob");
+    });
+});
+
+describe("util", () => {
+    it("drops frames with malformed user ids", () => {
+        expect(validFrame({ t: "join", id: "a1b2c3d4", name: "x" })).toBe(true);
+        expect(validFrame({ t: "msg", id: 7, from: "a1b2c3d4" })).toBe(true);
+        expect(validFrame({ t: "join", id: "__proto__" })).toBe(false);
+        expect(validFrame({ t: "hello", you: "a1b2c3d4", users: [{ id: "constructor" }], history: [] })).toBe(false);
+        expect(validFrame({ t: "hello", you: "a1b2c3d4", users: [], history: [{ from: "__proto__" }] })).toBe(false);
+    });
+    it("randomInt stays in range", () => {
+        for (let i = 0; i < 1000; i++) {
+            const r = randomInt(10);
+            expect(r >= 0 && r < 10 && Number.isInteger(r)).toBe(true);
+        }
     });
 });

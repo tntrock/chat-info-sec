@@ -1,14 +1,33 @@
 export const ROOM_RE = /^[A-Z0-9]{8,12}$/;
 
+// 拒絕取樣：避免 % 造成的分布偏差
+export function randomInt(n) {
+    const lim = 2 ** 32 - (2 ** 32 % n), buf = new Uint32Array(1);
+    do crypto.getRandomValues(buf); while (buf[0] >= lim);
+    return buf[0] % n;
+}
+
 export function randomRoom() {
     const c = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
-    return [...crypto.getRandomValues(new Uint8Array(8))].map(b => c[b % c.length]).join("");
+    return Array.from({ length: 8 }, () => c[randomInt(c.length)]).join("");
 }
 
 const ADJ = ["安靜的", "迷路的", "熬夜的", "害羞的", "勇敢的", "神秘的", "慵懶的", "好奇的", "低調的", "路過的"];
 const ANIMAL = ["水獺", "狐狸", "貓頭鷹", "企鵝", "樹懶", "刺蝟", "海豹", "浣熊", "柴犬", "黑貓"];
-const pick = a => a[crypto.getRandomValues(new Uint8Array(1))[0] % a.length];
+const pick = a => a[randomInt(a.length)];
 export const randomName = () => pick(ADJ) + pick(ANIMAL);
+
+// 使用者 id 會拿來當物件 key；格式不符（例如 "__proto__"）的封包整個丟掉
+const UID_RE = /^[0-9a-f]{8}$/;
+const isUid = s => typeof s === "string" && UID_RE.test(s);
+export function validFrame(d) {
+    if (!d || typeof d !== "object") return false;
+    if (d.from !== undefined && !isUid(d.from)) return false;
+    if (d.you !== undefined && !isUid(d.you)) return false;
+    if (d.t !== "msg" && d.id !== undefined && !isUid(d.id)) return false;
+    if (d.users !== undefined && !(Array.isArray(d.users) && d.users.every(u => isUid(u?.id)))) return false;
+    return d.history === undefined || (Array.isArray(d.history) && d.history.every(h => isUid(h?.from)));
+}
 
 // 接受完整邀請連結或單純房號
 export function parseInvite(input) {
