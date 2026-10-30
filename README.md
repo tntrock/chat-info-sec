@@ -1,5 +1,14 @@
 # chat.info-sec.vip
 
+[![CI](https://github.com/tntrock/chat-info-sec/actions/workflows/ci.yml/badge.svg)](https://github.com/tntrock/chat-info-sec/actions/workflows/ci.yml)
+[![codecov](https://codecov.io/gh/tntrock/chat-info-sec/graph/badge.svg)](https://codecov.io/gh/tntrock/chat-info-sec)
+[![CodeQL](https://github.com/tntrock/chat-info-sec/actions/workflows/github-code-scanning/codeql/badge.svg)](https://github.com/tntrock/chat-info-sec/security/code-scanning)
+[![License: MIT](https://img.shields.io/github/license/tntrock/chat-info-sec)](LICENSE)
+[![Cloudflare Workers](https://img.shields.io/badge/Cloudflare-Workers-F38020?logo=cloudflare&logoColor=white)](https://workers.cloudflare.com/)
+[![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black)](https://react.dev/)
+[![Vite](https://img.shields.io/badge/Vite-8-646CFF?logo=vite&logoColor=white)](https://vite.dev/)
+[![E2EE](https://img.shields.io/badge/E2EE-AES--256--GCM-2ea44f?logo=letsencrypt&logoColor=white)](#chatinfo-secvip)
+
 端對端加密的匿名聊天室，跑在 Cloudflare Workers + Durable Objects。
 
 - **E2EE**：訊息、圖片、暱稱、P2P 信令都在瀏覽器以 AES-256-GCM 加密。金鑰由房間密碼（或無密碼房的邀請連結 `#` 後隨機金鑰）經 PBKDF2 推導，伺服器只拿到驗證 token 的雜湊與密文。
